@@ -6,39 +6,60 @@
     <title>Interactive Wooden Bookcase</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for the modal -->
+    <link href="custom-book-modal.css" rel="stylesheet">
     <style>
         body {
             background-color: #f0f0f0;
         }
-        /* Wood background for the entire bookcase */
+        .heading {
+            /*max-width: fit-content;*/
+            /*margin: 20px;*/
+            margin-left: 0px; 
+            padding: 10px 0;
+            
+            border-left: 5px;
+            border-right: 5px;
+            display: flex; /* Use flexbox */
+            align-items: center;
+            
+            width: 100%;
+        }
+        .heading-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-left: 20px;
+        }
+        /* Bookcase styling with realistic wood texture */
         .bookcase {
-            width: 80%;
-            height: 500px;
+            width: 70%;
+            height: 600px;
             margin: 30px auto;
-            background: url('https://www.transparenttextures.com/patterns/wood.png'); /* Example wood texture */
-            border: 5px solid #8B4513; /* Brown border to simulate the wood frame */
+            background: url('https://i.imgur.com/1kIbUbi.jpg'); /* High-quality wood texture */
+            background-size: cover;
+            border: 5px solid #8B4513; /* Brown border to simulate a wooden frame */
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
             padding: 10px;
         }
-        /* Individual shelves with a wooden texture and shadow for 3D effect */
+
         .shelf {
-            background: #8B4513; /* Wood color */
+            background: #8B4513;
             border-radius: 5px;
             height: 80px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
             padding: 10px;
-            box-shadow: 0 5px 8px rgba(0,0,0,0.2); /* Depth shadow */
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.2), 0 5px 8px rgba(0,0,0,0.2);
         }
-        /* Books */
+
         .book {
             width: 50px;
             height: 100%;
-            background-color: #3498db;
             border-radius: 3px;
             cursor: pointer;
             text-align: center;
@@ -46,29 +67,48 @@
             color: white;
             font-weight: bold;
             margin-right: 10px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2); /* Book depth */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            border: 2px solid rgba(0, 0, 0, 0.2);
         }
-        .navbar {
-            display: flex;
-            justify-content: flex-end;
+
+        /* Customization for "Add Book" button in bottom right corner */
+        .add-book-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+         /* Navbar */
+         .navbar {
             padding: 10px;
         }
-        .navbar button {
-            margin-left: 10px;
+
+        /* Aligning Profile and Logout buttons to the right */
+        .navbar-buttons {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .navbar-buttons button {
+            margin-right: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar with Logout and Profit buttons -->
-    <nav class="navbar bg-light">
-        <button class="btn btn-secondary">Profile</button>
-        <button class="btn btn-primary">Logout</button>
-    </nav>
-
-    <!-- Company Logo -->
-    <div class="text-center">
-        <h1>ShelveIt!</h1>
-        <p>Your one-stop shop for all book-related needs</p>
+    <!-- Navbar Header with Heading and Buttons -->
+    <div class="container-fluid">
+        <div class="row align-items-center mt-2">
+            <div class="col-6">
+                <h1>ShelveIt!</h1>
+            </div>
+            <div class="col-6 d-flex justify-content-end">
+                <button class="btn btn-secondary me-2">Profile</button>
+                <button class="btn btn-primary">Logout</button>
+            </div>
+        </div>
     </div>
 
     <!-- Interactive Wooden Bookcase -->
@@ -77,50 +117,69 @@
             <div class="shelf" id="shelf1"></div>
             <div class="shelf" id="shelf2"></div>
             <div class="shelf" id="shelf3"></div>
-        </div>
-        <!-- Add Book Button -->
-        <div class="text-center">
-            <button class="btn btn-success" onclick="addBook()">Add Book</button>
+            <div class="shelf" id="shelf4"></div>
         </div>
     </div>
 
+    <!-- Add Book Button (Fixed to Bottom Right) -->
+    <button class="btn btn-success add-book-btn" data-bs-toggle="modal" data-bs-target="#customizeBookModal">Add Book</button>
+
+    <!-- Placeholder for dynamically loaded modal -->
+    <div id="modal-container"></div>
+
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Load modal HTML dynamically -->
+    <script>
+        fetch('addBook.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('modal-container').innerHTML = html;
+            });
+    </script>
 
     <!-- JavaScript for Drag and Drop functionality -->
     <script>
         let bookId = 0;
 
-        function addBook() {
-            // Create a new book element
+        function addCustomBook() {
+            const color = document.getElementById('bookColor').value;
+            const imageFile = document.getElementById('bookCover').files[0];
             const book = document.createElement('div');
             book.classList.add('book');
             book.setAttribute('draggable', 'true');
             book.setAttribute('id', 'book-' + bookId);
             book.innerText = 'Book ' + bookId;
 
-            // Add event listeners for dragging
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    book.style.backgroundImage = `url(${e.target.result})`;
+                    book.style.backgroundSize = 'cover';
+                }
+                reader.readAsDataURL(imageFile);
+            } else {
+                book.style.backgroundColor = color;
+            }
+
             book.addEventListener('dragstart', dragStart);
             book.addEventListener('dragend', dragEnd);
 
-            // Add the book to the first shelf (default)
             document.getElementById('shelf1').appendChild(book);
 
             bookId++;
         }
 
-        // Drag Start Event
         function dragStart(e) {
             e.target.classList.add('draggable');
             e.dataTransfer.setData('text/plain', e.target.id);
         }
 
-        // Drag End Event
         function dragEnd(e) {
             e.target.classList.remove('draggable');
         }
 
-        // Allow shelves to accept dropped books
         document.querySelectorAll('.shelf').forEach(shelf => {
             shelf.addEventListener('dragover', dragOver);
             shelf.addEventListener('drop', drop);
