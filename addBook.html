@@ -26,10 +26,38 @@
             font-weight: bold;
         }
 
-        #bookColor {
+        /* Adjusting the size of the color input (book color preview) */
+        input[type="color"].form-control {
+            width: 40px;  /* Change width */
+            height: 40px; /* Change height */
+            padding: 0;
+            border-radius: 5px;
             cursor: pointer;
         }
-
+        input[type="file"].form-control {
+            width: 55%;  /* Change width */
+            height: 30px; /* Change height */
+            padding: 3px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+          /* Styling for book spine text */
+        .book {
+            width: 50px;
+            height: 100%;
+            border-radius: 3px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 80px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            writing-mode: vertical-rl; /* Make text vertical */
+            transform: rotate(180deg); /* Rotate for correct spine orientation */
+            margin-right: 2px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -47,6 +75,10 @@
                             <input type="color" class="form-control" id="bookColor" value="#3498db">
                         </div>
                         <div class="mb-3">
+                            <label for="bookName" class="form-label">Enter Book Title</label>
+                            <input type="text" class="form-control" id="bookName" placeholder="Book Title">
+                        </div>
+                        <div class="mb-3">
                             <label for="bookCover" class="form-label">Upload Custom Book Cover</label>
                             <input type="file" class="form-control" id="bookCover" accept="image/*">
                         </div>
@@ -58,6 +90,6 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>       
 </body>
 </html>
