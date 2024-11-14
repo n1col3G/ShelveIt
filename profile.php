@@ -1,3 +1,32 @@
+<?php
+  session_start();
+  include 'db_connect.php';
+
+  // Redirect to the login page if the user is not logged in
+  if (!isset($_SESSION['email'])) {
+    header("Location: logout.php");
+    exit();
+  }
+
+  // Determine redirection page based on email domain
+  $redirectPage = 'userHome.php';  // default
+  if ($_SESSION['admin'] === 1) {
+      $redirectPage = 'adminHome.php';
+  }
+
+  // Check if the session variables are set
+  if (isset($_SESSION['user_id']) && isset($_SESSION['firstName']) && isset($_SESSION['lastName']) && isset($_SESSION['email'])) {
+    $userID = $_SESSION['user_id'];
+    $firstName = $_SESSION['firstName'];
+    $lastName = $_SESSION['lastName'];
+    $email = $_SESSION['email'];
+  } else {
+    // If the session variables are not set, redirect to the login page or handle the error
+    header("Location: logout.php");
+    exit();
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,7 +37,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
       body {
-            background-color: #f0f0f0;
+          background-color: #f0f0f0;
         }
         .heading {
             /*max-width: fit-content;*/
@@ -189,20 +218,24 @@
                 <h1>ShelveIt!</h1>
             </div>
             <div class="col-6 d-flex justify-content-end">
-                <button class="btn btn-primary" onclick="window.location.href='login.html';">Logout</button>
+                <button class="btn btn-primary" onclick="window.location.href='logout.php';">Logout</button>
             </div>
         </div>
     </div>
     <div class="profile">
-      <button id="closePopup" class="close-btn" onclick="window.location.href='userHome.html';">X</button>
+      <button id="closePopup" class="close-btn" onclick="window.location.href='<?php echo $redirectPage; ?>';">X</button>
       <h1>User Profile</h1>
       <div class="user-info">
         <i class="fas fa-user-shield"></i>
-        <p>User Type: <?php echo ucfirst(htmlspecialchars($userType)); ?></p>
+        <p>Account Number: <?php echo htmlspecialchars($userID); ?></p>
       </div>
       <div class="user-info">
         <i class="fas fa-signature"></i>
-        <p>Username: <?php echo htmlspecialchars($username); ?></p>
+        <p>First name: <?php echo htmlspecialchars($firstName); ?></p>
+      </div>
+      <div class="user-info">
+        <i class="fas fa-signature"></i>
+        <p>Last name: <?php echo htmlspecialchars($lastName); ?></p>
       </div>
       <div class="user-info">
         <i class="fas fa-at"></i>

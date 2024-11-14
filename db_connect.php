@@ -1,14 +1,28 @@
 <?php
-$servername = "localhost";
-$username = "root";  // replace with your database username
-$password = "";      // replace with your database password
-$dbname = "your_database_name";  // replace with your database name
+class Database{
+    public function __construct(){
+        die('Init function error');
+    }
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+    public static function dbConnect(){
+        $mysqli = null;
+        require_once("/home/ngoulet/DBgoulet.php");
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+        if($mysqli == null){
+            try{
+                $mysqli = new PDO('mysql:host='.DBHOST.';dbname='.DBNAME, USERNAME, PASSWORD);
+                //echo "Successful Connection";
+            }catch(PDOException $e){
+                echo "Could not connect";
+                die($e->getMessage());
+            }
+        }
+        return $mysqli;
+    }
+
+    public static function dbDisconnect(){
+        $mysqli = null;
+    }
 }
+
 ?>
