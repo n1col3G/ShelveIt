@@ -18,13 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bookColor = $_POST['bookColor'];
     $bookName = $_POST['bookName'] ?? 'Untitled';
     $shelfID = $_POST['shelfID'] ?? 1;
-    $bookHeight = (int) $_POST['bookHeight'] ?? 100;  // Set a default value if needed
+    $bookHeight = (int) $_POST['bookHeight'] ?? 100;
     $bookWidth = (int) $_POST['bookWidth'] ?? 50;
     $imagePath = '';
     $bookOrder = $_POST['bookOrder'];
 
-
-     // Validate height and width
+    // Validate height and width
     if ($bookWidth < $minWidth || $bookWidth > $maxWidth) {
         echo json_encode(["status" => "error", "message" => "Book width must be between $minWidth and $maxWidth pixels."]);
         exit();
@@ -34,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Handle file upload
+   // Handle file upload
     if (isset($_FILES['bookCover']) && $_FILES['bookCover']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['bookCover']['tmp_name'];
         $fileName = $_FILES['bookCover']['name'];
@@ -42,21 +41,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fileType = $_FILES['bookCover']['type'];
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
-        
+
         // Allowed file extensions
         $allowedfileExtensions = ['jpg', 'png', 'jpeg', 'gif'];
         if (in_array($fileExtension, $allowedfileExtensions)) {
-            // Directory where images will be stored
-            $uploadFileDir = './uploads/';
-            $dest_path = $uploadFileDir . $fileName;
-
-            // Move the uploaded file
-            if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                $imagePath = $dest_path; // Store the file path
-            } else {
-                echo json_encode(["status" => "error", "message" => "Error moving the file."]);
+            // Check for file size (max 5MB, for example)
+            if ($fileSize > 5000000) {
+                echo json_encode(["status" => "error", "message" => "File size exceeds the limit of 5MB."]);
                 exit();
             }
+
+            $uploadFileDir = "/home/ngoulet/public_html/Csci487/ShelveIt/bookCovers/";
+            $webAccessibleDir = "/~ngoulet/Csci487/ShelveIt/bookCovers/"; // Web-accessible directory path
+
+            if (!is_dir($uploadFileDir)) {
+                if (!mkdir($uploadFileDir, 0777, true)) {
+                    echo json_encode(["status" => "error", "message" => "Failed to create upload directory."]);
+                    exit();
+                }
+            }
+            if (!is_writable($uploadFileDir)) {
+                echo json_encode(["status" => "error", "message" => "Upload directory is not writable."]);
+                exit();
+            }
+
+            $newFileName = uniqid() . '.' . $fileExtension;
+            $dest_path = $uploadFileDir . $newFileName;
+            $imagePath = $webAccessibleDir . $newFileName; // Store web-accessible path for the database
+
+            if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                // Successfully uploaded
+            } else {
+                error_log("Failed to move uploaded file.");
+                error_log("Source: $fileTmpPath");
+                error_log("Destination: $dest_path");
+                echo json_encode(["status" => "error", "message" => "Error moving the file."]);
+                exit();
+            }            
         } else {
             echo json_encode(["status" => "error", "message" => "Only image files are allowed."]);
             exit();
@@ -72,8 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':bookName', $bookName);
         $stmt->bindParam(':bookColor', $bookColor);
         $stmt->bindParam(':shelfID', $shelfID);
-        $stmt->bindParam(':imagePath', $imagePath); // Save the file path in the database
-        $stmt->bindParam(':userID', $userID); // Assuming you have user session
+        $stmt->bindParam(':imagePath', $imagePath);
+        $stmt->bindParam(':userID', $userID);
         $stmt->bindParam(':bookOrder', $bookOrder);
         $stmt->bindParam(':bookHeight', $bookHeight);
         $stmt->bindParam(':bookWidth', $bookWidth);

@@ -1,4 +1,5 @@
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         #friendRequestsContainer {
             background-color: #f0f0f0;
@@ -11,7 +12,7 @@
 <!-- Modal for Adding a Friend, Friend Requests, and Friends List -->
 <div class="modal fade" id="friendModal" tabindex="-1" aria-labelledby="friendModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 112%;">
             <div class="modal-header">
                 <h5 class="modal-title" id="friendModalLabel">ShelveIt! Friends</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -20,7 +21,7 @@
                 <!-- Tabs Navigation -->
                 <ul class="nav nav-tabs" id="friendModalTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="friends-list-tab" data-bs-toggle="tab" data-bs-target="#friends-list" type="button" role="tab" aria-controls="friends-list" aria-selected="true">Friends</button>
+                        <button class="nav-link active" id="friends-list-tab" data-bs-toggle="tab" data-bs-target="#friends-list" type="button" role="tab" aria-controls="friends-list" aria-selected="true">View Friends</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="add-friend-tab" data-bs-toggle="tab" data-bs-target="#add-friend" type="button" role="tab" aria-controls="add-friend" aria-selected="false">Add Friends</button>
@@ -166,11 +167,13 @@
             friendButtonsContainer.innerHTML = ''; // Clear existing content
 
             friends.forEach(friend => {
+                //console.log(friend.friendID);
                 const friendDiv = document.createElement("div");
                 friendDiv.textContent = `${friend.Firstname} ${friend.Lastname} (Friends since ${friend.friendshipDate})`;
 
                 const viewLibraryButton = document.createElement("button");
                 viewLibraryButton.classList.add('btn', 'btn-info');
+                viewLibraryButton.style.marginLeft = "10px";
                 viewLibraryButton.textContent = "View Library";
                 //viewLibraryButton.onclick = () => viewLibrary(friend.userID);
                 //console.log(friend);
@@ -185,13 +188,22 @@
                     }
                 };
                 friendDiv.appendChild(viewLibraryButton);
-                friendButtonsContainer.appendChild(friendDiv);
-
-                //const viewLibraryButton = document.createElement('button');
-                //viewLibraryButton.classList.add('btn', 'btn-info');
-               // viewLibraryButton.textContent = 'View Library';
                 
-                //friendButtonsContainer.appendChild(viewLibraryButton);
+                // Trash Can (Delete Friendship) Button
+                const deleteButton = document.createElement("button");
+                deleteButton.classList.add('btn', 'btn-danger');
+                deleteButton.style.marginLeft = "6px";
+                deleteButton.style.paddingTop = "9.5px";
+                deleteButton.style.paddingBottom = "9.5px";
+                //deleteButton.textContent = "🗑️"; // Trash can icon
+                const trashIcon = document.createElement("i");
+                trashIcon.classList.add('fas', 'fa-user-slash');
+                deleteButton.appendChild(trashIcon);
+                const friendDeleteID = friend.friendID;
+                deleteButton.onclick = () => deleteFriend(friendDeleteID); // Pass friendID to delete
+                friendDiv.appendChild(deleteButton);
+                
+                friendButtonsContainer.appendChild(friendDiv);
             });
         })
         .catch(error => console.error('Error loading friends:', error));
@@ -199,6 +211,28 @@
 
     function viewLibrary(friendUserID) {
         window.location.href = `viewLibrary.php?friendUserID=${friendUserID}`;
+    }
+    function deleteFriend(friendDeleteID) {
+        if (confirm("Are you sure you want to remove this friend?")) {
+            console.log("Sending delete request for friendID:", friendDeleteID);
+            fetch('deleteFriend.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ friendID: friendDeleteID })
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Server response:', result);
+                if (result.status === 'Success') {
+                    alert(result.message);
+                    loadFriends(); // Reload the friend list
+                } else {
+                    console.error(result.message);
+                    alert("Failed to delete friend: " + result.message);
+                }
+            })
+            .catch(error => console.error('Error deleting friend:', error));
+        }
     }
 </script>
 

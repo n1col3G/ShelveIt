@@ -13,7 +13,7 @@ $userID = $_SESSION['user_id']; // Get the current user's ID
 
 // Fetch books from the database
 try {
-    $stmt = $db->prepare("SELECT bookID, bookName, bookColor, shelfID, imagePath, bookOrder, bookHeight, bookWidth FROM Books WHERE Users_UserID = ? ORDER BY shelfID, bookOrder");
+    $stmt = $db->prepare("SELECT * FROM Books WHERE Users_UserID = ? ORDER BY shelfID, bookOrder");
     $stmt->execute([$userID]);
     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

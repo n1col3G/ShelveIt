@@ -29,9 +29,15 @@ if ($stmt->rowCount() > 0) {
     $stmt->execute();
     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode($books);
+    // Query for friend's first name
+    $sql = "SELECT Firstname FROM Users WHERE UserID = :friendUserID";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':friendUserID', $friendUserID, PDO::PARAM_INT);
+    $stmt->execute();
+    $friendName = $stmt->fetchColumn();
 } else {
-    echo json_encode(['error' => 'Access Denied']);
+    $books = [];
+    $firstName = 'Unknown';
 }
 ?>
 
@@ -45,13 +51,21 @@ if ($stmt->rowCount() > 0) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Add your custom styles here */
+        body {
+            /*background-color: #f0f0f0;*/
+            background-image: url('images/bkg7.jpeg');
+            width: 100%;
+            height: 100%;
+            background-size: 111%;
+            background-position: center;
+        }
         .bookcase {
             width: 70%;
             height: 600px;
-            margin: 30px auto;
+            margin: 20px auto;
             background-image: url('images/bookcase0_bg.jpeg');
             background-size: cover;
-            border: 5px solid #8B4513;
+            border: 1px solid #664024;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
@@ -59,7 +73,7 @@ if ($stmt->rowCount() > 0) {
             padding: 10px;
         }
         .shelf {
-            background: #8B4513;
+            background: #664024;
             border-radius: 5px;
             height: 115px;
             display: flex;
@@ -71,7 +85,7 @@ if ($stmt->rowCount() > 0) {
         .book {
             width: 50px;
             height: 100%;
-            border-radius: 3px;
+            /*border-radius: 3px;*/
             cursor: not-allowed; /* Disable interaction */
             text-align: center;
             line-height: 80px;
@@ -83,11 +97,36 @@ if ($stmt->rowCount() > 0) {
             border: 2px solid rgba(0, 0, 0, 0.2);
             writing-mode: vertical-rl;
             transform: rotate(180deg);
+
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        .heading-image {
+            height: 70px; /* Adjust the height of the image */
+            width: auto; /* Let the width adjust proportionally */
+            margin-left: 5px;
         }
     </style>
 </head>
 <body>
-    <h1 class="text-center">Friend's Library</h1>
+    <div class="container-fluid">
+        <div class="row align-items-center mt-2">
+            <div class="col-6">
+                <img src="images/ShelveIt-01.png" alt="Image" class="heading-image">
+            </div>
+            <div class="col-6 d-flex justify-content-end">
+                <button class="btn btn-secondary me-2" onclick="window.location.href='userHome.php';">Home</button>
+                <button class="btn btn-primary" onclick="window.location.href='logout.php';">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-center"><?php echo htmlspecialchars($friendName); ?>'s Library</h3>
     <div class="container">
         <div class="bookcase" id="bookcase">
             <div class="shelf" id="shelf1"></div>
@@ -107,9 +146,13 @@ if ($stmt->rowCount() > 0) {
                 bookElement.style.width = `${book.bookWidth}px`;
                 bookElement.style.backgroundColor = book.bookColor;
 
+                // Add the book title inside the book element
+                bookElement.textContent = book.bookName;
+
                 if (book.imagePath) {
                     bookElement.style.backgroundImage = `url(${book.imagePath})`;
                     bookElement.style.backgroundSize = 'cover';
+                    bookElement.style.backgroundColor = 'transparent'; // Hide text if image is present
                 }
 
                 const shelfElement = document.getElementById(`shelf${book.shelfID}`);

@@ -19,13 +19,12 @@ CREATE TABLE Users (
 -- Create the Books table
 CREATE TABLE Books (
     bookID INT AUTO_INCREMENT PRIMARY KEY,
-    ISBN INT,
     bookColor VARCHAR(7),
     bookHeight INT,
     bookWidth INT,
     bookName VARCHAR(50),
     shelfID VARCHAR(10),
-    imagePath VARCHAR(50),
+    imagePath VARCHAR(255),
     Users_UserID INT NOT NULL,
     bookOrder INT,
     FOREIGN KEY (Users_UserID) REFERENCES Users(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -53,7 +52,9 @@ CREATE TABLE Friends (
     FOREIGN KEY (requestID) REFERENCES FriendRequests(requestID) ON DELETE CASCADE,
     FOREIGN KEY (userID1) REFERENCES Users(UserID) ON DELETE CASCADE,
     FOREIGN KEY (userID2) REFERENCES Users(UserID) ON DELETE CASCADE,
-    UNIQUE (userID1, userID2)
+    userID_min INT AS (LEAST(userID1, userID2)) STORED,
+    userID_max INT AS (GREATEST(userID1, userID2)) STORED,
+    UNIQUE (userID_min, userID_max)
 ) ENGINE=InnoDB;
 
 

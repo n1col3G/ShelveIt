@@ -61,19 +61,12 @@ function reassignBookOrders($db, $shelfID) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the POSTed data
     $data = json_decode(file_get_contents('php://input'), true);
     $bookID = $data['bookID'];
     $newShelfID = $data['shelfID'];
     $bookOrder = $data['bookOrder'];
 
-    // Reassign bookOrder for books on the new shelf
-    if ($newShelfID) {
-        reassignBookOrders($db, $newShelfID);
-    }
-
-    if (isset($bookID) && isset($newShelfID)) {
-        // Update the book's shelf in the database
+    if (isset($bookID, $newShelfID, $bookOrder)) {
         try {
             $stmt = $db->prepare("UPDATE Books SET shelfID = ?, bookOrder = ? WHERE bookID = ? AND Users_UserID = ?");
             $stmt->execute([$newShelfID, $bookOrder, $bookID, $_SESSION['user_id']]);

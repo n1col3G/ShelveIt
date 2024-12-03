@@ -51,11 +51,19 @@
         .auth-form.active {
             display: block;
         }
+        .heading-image {
+            height: 50px; /* Adjust the height of the image */
+            width: auto; /* Let the width adjust proportionally */
+            margin-left: -9px;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="auth-container">
-        <h3 class="text-center mb-4" id="auth-title">Login to ShelveIt!</h3>
+        <h3 class="text-center mb-4" id="auth-title">Login to 
+            <img src="images/ShelveIt-01.png" alt="Image" class="heading-image">
+        </h3>
 
         <!-- Login Form -->
         <form id="loginForm" class="auth-form active" action="login_user.php" method="post">
@@ -110,15 +118,17 @@
     
         // Function to switch forms between Login and Sign-up
         function switchForms() {
+            const imgTag = '<img src="images/ShelveIt-01.png" alt="Image" class="heading-image">';
+
             if (loginForm.classList.contains('active')) {
                 loginForm.classList.remove('active');
                 signupForm.classList.add('active');
-                authTitle.innerText = 'Sign Up for ShelveIt!';
+                authTitle.innerHTML = `Sign Up for ${imgTag}`;
                 toggleMessage.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Login here</a>';
             } else {
                 signupForm.classList.remove('active');
                 loginForm.classList.add('active');
-                authTitle.innerText = 'Login to ShelveIt!';
+                authTitle.innerHTML = `Login to ${imgTag}`;
                 toggleMessage.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up here</a>';
             }
         }

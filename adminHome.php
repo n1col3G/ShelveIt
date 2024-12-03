@@ -72,12 +72,10 @@ if (isset($_POST['delete_book'])) {
             /*margin: 20px;*/
             margin-left: 0px; 
             padding: 10px 0;
-            
             border-left: 5px;
             border-right: 5px;
             display: flex; /* Use flexbox */
             align-items: center;
-            
             width: 100%;
         }
         .heading-content {
@@ -85,6 +83,11 @@ if (isset($_POST['delete_book'])) {
             align-items: center;
             width: 100%;
             margin-left: 20px;
+        }
+        .heading-image {
+            height: 70px; /* Adjust the height of the image */
+            width: auto; /* Let the width adjust proportionally */
+            margin-left: 5px;
         }
         .navbar {
             padding: 10px;
@@ -131,7 +134,8 @@ if (isset($_POST['delete_book'])) {
     <div class="container-fluid">
         <div class="row align-items-center mt-2">
             <div class="col-6">
-                <h1>ShelveIt!</h1>
+                <img src="images/ShelveIt-01.png" alt="Image" class="heading-image">
+                <!--<h1>ShelveIt!</h1>-->
             </div>
             <div class="col-6 d-flex justify-content-end">
                 <button class="btn btn-secondary me-2" onclick="window.location.href='profile.php';">Profile</button>
@@ -153,10 +157,19 @@ if (isset($_POST['delete_book'])) {
                     <?= htmlspecialchars($user['Firstname'] . ' ' . $user['Lastname'] . '  -  ' . $user['Email']); ?>
                     <span class="text-muted">(Last Updated: <?= htmlspecialchars($user['lastEdit'] ?: 'N/A'); ?>, <?= $user['book_count']; ?> books)</span>
                     <span id="toggle-icon-<?= $user['UserID']; ?>" class="fas fa-chevron-down" style="cursor:pointer; float: left; margin-right: 10px; margin-left: 2px; margin-top: 3px;"></span>
-
+                    <!--
                     <form method="POST" style="display:inline;">
-                        <input type="hidden" name="user_id" value="<?= $user['UserID']; ?>">
+                        <input type="hidden" name="target_user_id" value="<?= $user['UserID']; ?>">
                         <i type="submit" name="delete_user" class="fas fa-trash btn btn-danger btn-sm float-end" onclick="confirmDelete()"></i>
+                    </form>
+                    -->
+
+                    <form method="POST" action="deleteAccount.php" style="display:inline;">
+                        <input type="hidden" name="target_user_id" value="<?= $user['UserID']; ?>">
+                        <input type="hidden" name="confirm_delete" value="yes">
+                        <button type="submit" name="delete_user" class="btn btn-danger btn-sm float-end" onclick="return confirm('Are you sure you want to delete this user?');">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </form>
                 </div>
                 <div class="user-books" id="books-<?= $user['UserID']; ?>">
@@ -211,9 +224,9 @@ if (isset($_POST['delete_book'])) {
             }
         }
     </script>
-    <!-- Form for account deletion -->
+    <!-- Form for account deletion 
     <form id="deleteForm" action="deleteAccount.php" method="post" style="display: none;">
         <input type="hidden" name="confirm_delete" value="yes">
-    </form>
+    </form>-->
 </body>
 </html>

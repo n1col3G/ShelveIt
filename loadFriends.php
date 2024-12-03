@@ -13,12 +13,12 @@ $userID = $_SESSION['user_id'];
 
 try {
     // SQL query to select friends excluding the current user from results
-    $sql = "SELECT u.UserID, u.Firstname, u.Lastname, f.friendshipDate 
+    $sql = "SELECT u.UserID, u.Firstname, u.Lastname, f.friendshipDate, f.friendID 
             FROM Friends f
-            JOIN Users u ON (u.UserID = CASE 
+            JOIN Users u ON u.UserID = CASE 
                 WHEN f.userID1 = :userID THEN f.userID2 
                 WHEN f.userID2 = :userID THEN f.userID1 
-            END)
+            END
             WHERE (f.userID1 = :userID OR f.userID2 = :userID)";
 
     $stmt = $pdo->prepare($sql);
@@ -29,7 +29,7 @@ try {
     $friends = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Return friends list as JSON response
-    if ($friends === false) {
+    if ($friends === false || empty($friends)) {
         error_log("No friends found or query error.");
         echo json_encode([]);
         exit;

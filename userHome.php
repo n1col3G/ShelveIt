@@ -37,9 +37,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom CSS for the modal -->
     <link href="custom-book-modal.css" rel="stylesheet">
+    <!--<link rel="icon" href="images/ShelveIt-03.png" type="image/x-icon">-->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/images/site.webmanifest">
     <style>
         body {
-            background-color: #f0f0f0;
+            /*background-color: #f0f0f0;*/
+            background-image: url('images/bkg7.jpeg');
+            width: 100%;
+            height: 100%;
+            background-size: 111%;
+            background-position: center;
         }
         .heading {
             /*max-width: fit-content;*/
@@ -50,7 +60,6 @@
             border-right: 5px;
             display: flex; /* Use flexbox */
             align-items: center;
-            
             width: 100%;
         }
         .heading-content {
@@ -59,15 +68,20 @@
             width: 100%;
             margin-left: 20px;
         }
+        .heading-image {
+            height: 70px; /* Adjust the height of the image */
+            width: auto; /* Let the width adjust proportionally */
+            margin-left: 5px;
+        }
         /* Bookcase styling with realistic wood texture */
         .bookcase {
             width: 70%;
             height: 600px;
             margin: 30px auto;
-            /*background: url('https://i.imgur.com/1kIbUbi.jpg');*/ /* High-quality wood texture */
             background-image: url('images/bookcase0_bg.jpeg');
             background-size: cover;
-            border: 5px solid #8B4513; /* Brown border to simulate a wooden frame */
+            /*border: 5px solid #8B4513;  Brown border to simulate a wooden frame */
+            border: 1px solid #664024;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
@@ -75,30 +89,46 @@
             padding: 10px;
         }
         .shelf {
-            background: #8B4513;
+            background: #664024;
             border-radius: 5px;
             height: 115px;
             display: flex;
             justify-content: flex-start;
-            align-items: center;
+            align-items: flex-end;
             padding: 10px;
             box-shadow: inset 0 5px 10px rgba(0,0,0,0.2), 0 5px 8px rgba(0,0,0,0.2);
+            position: relative;
         }
         .book {
-            width: 50px;
-            height: 100%;
+            /*width: 50px;
+            height: 100%;*/
             border-radius: 3px;
             cursor: pointer;
-            text-align: center;
-            line-height: 80px;
-            color: white;
+            /*text-align: center;*/
+            /*line-height: 80px;*/
+            /*color: white;*/
             font-weight: bold;
             margin-right: 2px;
-            margin-bottom: -17px;
+            margin-bottom: -9px;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
             border: 2px solid rgba(0, 0, 0, 0.2);
             writing-mode: vertical-rl;
             transform: rotate(180deg);
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        .book-title {
+            font-size: 16px;  /*Default size */
+            /*font-size: calc(10px + 0.5vw);  Responsive scaling */
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 90%; /* Keep some padding from edges */
         }
         /* Customization for "Add Book" button in bottom right corner */
         .add-book-btn {
@@ -162,7 +192,8 @@
     <div class="container-fluid">
         <div class="row align-items-center mt-2">
             <div class="col-6">
-                <h1>ShelveIt!</h1>
+                <img src="images/ShelveIt-01.png" alt="Image" class="heading-image">
+                <!--<h1>ShelveIt!</h1>-->
             </div>
             <div class="col-6 d-flex justify-content-end">
                 <button class="btn btn-secondary me-2" onclick="window.location.href='profile.php';">Profile</button>
@@ -225,7 +256,7 @@
                             </select>
                         </div>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-success" onclick="addCustomBook(event)">Add Book</button>
+                        <button type="button" class="btn btn-success" onclick="addCustomBook(event)" data-bs-dismiss="modal">Add Book</button>
                     </form>
                 </div>
             </div>
@@ -240,14 +271,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="editBookForm">
-                            <div class="mb-3">
-                                <label for="editBookName" class="form-label">Book Name</label>
-                                <input type="text" class="form-control" id="editBookName">
-                            </div>
+                        <form id="bookCustomizationForm">
                             <div class="mb-3">
                                 <label for="editBookColor" class="form-label">Book Color</label>
                                 <input type="color" class="form-control" id="editBookColor" name="bookColor" value="#3498db">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editBookName" class="form-label">Book Title</label>
+                                <input type="text" class="form-control" id="editBookName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editBookImage" class="form-label"> Current Book Cover</label>
+                                <input type="file" class="form-control" id="editBookImage" name="bookCover" accept="image/*">
+                                <img id="currentBookImagePreview" src="" alt="" style="max-width: 50%; margin-top: 10px;">
+                                <button type="button" class="btn btn-warning mt-2" id="deleteImageBtn">Delete Image</button>
                             </div>
                             <div class="mb-3">
                                 <label for="editBookWidth" class="form-label">Set Book Width (Max: 100px)</label>
@@ -296,19 +333,31 @@
                             bookElement.classList.add('book');
                             bookElement.setAttribute('draggable', 'true');
                             bookElement.setAttribute('id', 'book-' + book.bookID); // Ensure each book has a unique ID
-                            bookElement.innerText = book.bookName;
+                            //bookElement.innerText = book.bookName;
+
+                            const titleElement = document.createElement('span');
+                            titleElement.classList.add('book-title');
+                            titleElement.innerText = book.bookName;
+                            bookElement.appendChild(titleElement);
+                            //adjustTextSize(bookElement); // Dynamically resize text
 
 
                             // Apply dimensions
                             bookElement.style.height = book.bookHeight ? `${book.bookHeight}px` : '100';  // Default if height is missing
                             bookElement.style.width = book.bookWidth ? `${book.bookWidth}px` : '50';    // Default if width is missing
 
+                            adjustTextSize(bookElement); 
+
                             // Check if there's a cover image or color
-                            if (book.imagePath) {
+                            if (book.imagePath){
+                                console.log(`Image Path: ${book.imagePath}`);
                                 bookElement.style.backgroundImage = `url(${book.imagePath})`;
-                                bookElement.style.backgroundSize = 'cover'; // Ensure the image covers the book area
-                            } else {
-                                bookElement.style.backgroundColor = book.bookColor; // Default color
+                                bookElement.style.backgroundColor = 'transparent';
+                                bookElement.style.backgroundSize = 'cover';
+                            }
+                            else {
+                                bookElement.style.backgroundColor = book.bookColor || '#3498db'; // Default color
+                                bookElement.style.backgroundImage = 'none';
                             }
 
                             // Set the title text color (e.g., white for readability)
@@ -339,6 +388,28 @@
                 })
                 .catch(error => console.error('Failed to load books:', error));
         }
+        
+        function adjustTextSize(bookElement) {
+            const titleElement = bookElement.querySelector('.book-title');
+            const parentWidth = bookElement.style.height;
+            const parentHeight = bookElement.style.width;
+
+            let fontSize = 16; // Start with a base font size
+            titleElement.style.fontSize = `${fontSize}px`;
+
+            while (
+                fontSize > 10 && 
+                (titleElement.scrollWidth > parentWidth || titleElement.scrollHeight > parentHeight)
+            ) {
+                fontSize -= 1; // Reduce font size
+                titleElement.style.fontSize = `${fontSize}px`;
+            }
+
+            if (fontSize === 10 && (titleElement.scrollWidth > parentWidth || titleElement.scrollHeight > parentHeight)) {
+                titleElement.style.whiteSpace = 'normal'; // Wrap text if it still doesn't fit
+            }
+        }
+        
         
         function addCustomBook() {
             event.preventDefault();
@@ -412,11 +483,11 @@
                 if (data.status === 'success') {
                     console.log('Book added successfully');
                     // Reset the form
-                    document.getElementById("bookCustomizationForm").reset();
+                    document.getElementById('bookCustomizationForm').reset();
                     // Hide the modal
-                    var addModal = bootstrap.Modal.getInstance(document.getElementById('customizeBookModal')); // Get the modal instance
-                    addModal.hide(); // Hide the modal
-                    // Optionally update the book display here
+                    var modal = bootstrap.Modal.getInstance(customizeBookModal);
+                    //var addModal = bootstrap.Modal.getInstance(document.getElementById('customizeBookModal'));
+                    modal.hide(); // Hide the modal
                     loadBooks();
                 } else {
                     console.error('Failed to add book:', data.message);
@@ -430,7 +501,8 @@
         var customizeBookModal = document.getElementById('customizeBookModal');
         customizeBookModal.addEventListener('show.bs.modal', function () {
             // Reset the form fields every time the modal is opened
-            document.getElementById("bookCustomizationForm").reset();
+            document.getElementById('bookCustomizationForm').reset();
+            //addModal.hide();
         });
 
         function updateShelfInDatabase(bookID, newShelfID, newBookOrder) {
@@ -445,6 +517,7 @@
             .then(data => {
                 if (data.success) {
                     console.log('Shelf updated successfully');
+                    //loadBooks();
                 } else {
                     console.error('Failed to update shelf:', data.error);
                 }
@@ -453,6 +526,7 @@
         }
 
         // Drag and drop event functions
+        /*
         function dragStart(event) {
             const bookID = event.target.id; // Get the ID of the dragged book
             const oldShelfID = event.target.parentElement.id; // Get the current shelf ID
@@ -460,6 +534,14 @@
             // Store bookID and oldShelfID in the dataTransfer object
             event.dataTransfer.setData('bookID', bookID);
             event.dataTransfer.setData('oldShelfID', oldShelfID);
+        }
+        */
+
+        function dragStart(event) {
+            const bookElement = event.target;
+            const oldShelfID = bookElement.closest('.shelf').id.replace('shelf', '');
+            bookElement.dataset.oldShelfID = oldShelfID;
+            event.dataTransfer.setData('bookID', bookElement.id);
         }
 
 
@@ -475,7 +557,7 @@
         function dragOver(event) {
             event.preventDefault();
         }
-
+        /*
         function drop(event) {
             event.preventDefault();
 
@@ -521,6 +603,55 @@
                 bookElement.dataset.oldShelfID = newShelfID;
             }
         }
+        */
+
+        function drop(event) {
+            event.preventDefault();
+
+            const bookID = event.dataTransfer.getData('bookID');
+            const bookElement = document.getElementById(bookID);
+            const targetShelfID = event.target.closest('.shelf').id; // Closest shelf
+            const targetShelf = document.getElementById(targetShelfID);
+
+            // Extract numeric shelf ID
+            const newShelfID = targetShelfID.replace('shelf', '');
+
+            // Insert the book at the correct position
+            const dropTarget = event.target.closest('.book');
+            if (dropTarget) {
+                targetShelf.insertBefore(bookElement, dropTarget);
+            } else {
+                targetShelf.appendChild(bookElement);
+            }
+
+            // Get current order of books on the new shelf
+            const shelfBooks = Array.from(targetShelf.children);
+
+            // Update book order for all books in the new shelf
+            shelfBooks.forEach((element, index) => {
+                const currentBookID = element.id.replace('book-', '');
+                const newOrder = index + 1; // Ensure unique sequential order
+                console.log(`Updating: BookID = ${currentBookID}, ShelfID = ${newShelfID}, BookOrder = ${newOrder}`);
+                updateShelfInDatabase(currentBookID, newShelfID, newOrder);
+            });
+
+            // Handle old shelf if the book was moved
+            const oldShelfID = bookElement.dataset.oldShelfID;
+            if (oldShelfID && oldShelfID !== newShelfID) {
+                const oldShelf = document.getElementById(`shelf${oldShelfID}`);
+                const oldShelfBooks = Array.from(oldShelf.children);
+
+                // Update book order for all books in the old shelf
+                oldShelfBooks.forEach((element, index) => {
+                    const currentBookID = element.id.replace('book-', '');
+                    const newOrder = index + 1; // Adjust orders in the old shelf
+                    updateShelfInDatabase(currentBookID, oldShelfID, newOrder);
+                });
+            }
+
+            // Update the old shelf ID for the moved book
+            bookElement.dataset.oldShelfID = newShelfID;
+        }
 
         // Load books from the server when the page loads
         window.onload = function() {
@@ -540,6 +671,11 @@
                     document.getElementById('editBookColor').value = data.bookColor;
                     document.getElementById('editBookHeight').value = data.bookHeight;
                     document.getElementById('editBookWidth').value = data.bookWidth;
+                    document.getElementById('editBookImage').files[0] = data.imagePath;
+
+                    // Preview current image (optional)
+                    const imagePreview = document.getElementById('currentBookImagePreview');
+                    imagePreview.src = data.imagePath ? data.imagePath : '';
 
                     // Show the edit modal after populating the form
                     const editModal = new bootstrap.Modal(document.getElementById('editBookModal'));
@@ -551,6 +687,15 @@
                 });
         }
 
+        let isImageDeleted = false; 
+        document.getElementById('deleteImageBtn').addEventListener('click', function () {
+            // Clear the image preview and mark the image for deletion
+            document.getElementById('currentBookImagePreview').src = "";
+            document.getElementById('editBookImage').value = ''; // Clear file input
+            isImageDeleted = true; // Flag to send to the backend
+            console.log("Image marked for deletion.");
+        });
+
         // Save changes function to update the book in the database
         document.getElementById('saveChangesBtn').addEventListener('click', function() {
             // Collect updated data from the edit form
@@ -559,6 +704,8 @@
             const updatedColor = document.getElementById('editBookColor').value;
             const updatedHeight = document.getElementById('editBookHeight').value;
             const updatedWidth = document.getElementById('editBookWidth').value;
+            const updatedImage = document.getElementById('editBookImage').files[0];
+
 
             // Construct the data to send to the server
             const formData = new FormData();
@@ -567,7 +714,17 @@
             formData.append('bookColor', updatedColor);
             formData.append('bookHeight', updatedHeight);
             formData.append('bookWidth', updatedWidth);
-
+            formData.append('deleteImage', isImageDeleted ? 'true' : 'false');
+            //formData.append('bookCover', updatedImage);
+            if (!isImageDeleted && updatedImage) {
+                formData.append('bookCover', updatedImage);
+            }
+            
+             // Handle image deletion or update
+            
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
             // Send update request to editBook.php
             fetch('editBook.php', {
                 method: 'POST',
@@ -583,13 +740,19 @@
                     // Reload books to reflect changes
                     loadBooks();
                 } else {
-                    console.error("Failed to update book:", data.message);
+                    console.error("Failed to update book:", data.error);
                     alert("Failed to update book.");
                 }
             })
             .catch(error => {
                 console.error('Error updating book:', error);
             });
+        });
+
+        document.getElementById('editBookModal').addEventListener('hidden.bs.modal', function () {
+            //document.getElementById('editBookImage').value = ""; // Clear file input
+            document.getElementById('currentBookImagePreview').src = ""; // Clear image preview
+            isImageDeleted = false;
         });
 
         // Function to delete a book
