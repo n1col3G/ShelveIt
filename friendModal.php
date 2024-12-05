@@ -12,7 +12,7 @@
 <!-- Modal for Adding a Friend, Friend Requests, and Friends List -->
 <div class="modal fade" id="friendModal" tabindex="-1" aria-labelledby="friendModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content" style="width: 112%;">
+        <div class="modal-content" style="width: max-content; box-shadow: 0 0px 0px;">
             <div class="modal-header">
                 <h5 class="modal-title" id="friendModalLabel">ShelveIt! Friends</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -93,6 +93,9 @@
             console.log("Raw response:", text);  // Log raw response for debugging
             const data = JSON.parse(text);      // Now parse it as JSON if it's valid
             alert(data.status);
+            const recipientInput = document.getElementById("friendUserID");
+            recipientInput.value = ''; // Clear existing content
+            console.log("Input field cleared:", recipientInput.value);
         })
         .catch(error => console.error("Error sending friend request:", error));
     }
@@ -169,6 +172,7 @@
             friends.forEach(friend => {
                 //console.log(friend.friendID);
                 const friendDiv = document.createElement("div");
+                friendDiv.style.marginBottom = "10px";
                 friendDiv.textContent = `${friend.Firstname} ${friend.Lastname} (Friends since ${friend.friendshipDate})`;
 
                 const viewLibraryButton = document.createElement("button");

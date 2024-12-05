@@ -62,7 +62,7 @@ if ($stmt->rowCount() > 0) {
         .bookcase {
             width: 70%;
             height: 600px;
-            margin: 20px auto;
+            margin: 30px auto;
             background-image: url('images/bookcase0_bg.jpeg');
             background-size: cover;
             border: 1px solid #664024;
@@ -78,26 +78,26 @@ if ($stmt->rowCount() > 0) {
             height: 115px;
             display: flex;
             justify-content: flex-start;
-            align-items: center;
+            align-items: flex-end;
             padding: 10px;
             box-shadow: inset 0 5px 10px rgba(0,0,0,0.2), 0 5px 8px rgba(0,0,0,0.2);
+            position: relative;
         }
         .book {
-            width: 50px;
-            height: 100%;
-            /*border-radius: 3px;*/
-            cursor: not-allowed; /* Disable interaction */
-            text-align: center;
-            line-height: 80px;
+            /*width: 50px;
+            height: 100%;*/
+            border-radius: 3px;
+            cursor: pointer;
+            /*text-align: center;*/
+            /*line-height: 80px;*/
             color: white;
             font-weight: bold;
             margin-right: 2px;
-            margin-bottom: -17px;
+            margin-bottom: -9px;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
             border: 2px solid rgba(0, 0, 0, 0.2);
             writing-mode: vertical-rl;
             transform: rotate(180deg);
-
             border-radius: 8px;
             position: relative;
             display: flex;
@@ -110,6 +110,14 @@ if ($stmt->rowCount() > 0) {
             height: 70px; /* Adjust the height of the image */
             width: auto; /* Let the width adjust proportionally */
             margin-left: 5px;
+        }
+        .book-title {
+            font-size: 16px;  /*Default size */
+            /*font-size: calc(10px + 0.5vw);  Responsive scaling */
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 90%; /* Keep some padding from edges */
         }
     </style>
 </head>
@@ -147,12 +155,18 @@ if ($stmt->rowCount() > 0) {
                 bookElement.style.backgroundColor = book.bookColor;
 
                 // Add the book title inside the book element
-                bookElement.textContent = book.bookName;
+                //bookElement.textContent = book.bookName;
+
+                const titleElement = document.createElement('span');
+                titleElement.classList.add('book-title');
+                titleElement.innerText = book.bookName;
+                bookElement.appendChild(titleElement);
+                adjustTextSize(bookElement); 
 
                 if (book.imagePath) {
                     bookElement.style.backgroundImage = `url(${book.imagePath})`;
                     bookElement.style.backgroundSize = 'cover';
-                    bookElement.style.backgroundColor = 'transparent'; // Hide text if image is present
+                    bookElement.style.backgroundColor = 'transparent';
                 }
 
                 const shelfElement = document.getElementById(`shelf${book.shelfID}`);
@@ -161,6 +175,27 @@ if ($stmt->rowCount() > 0) {
                 }
             });
         });
+
+        function adjustTextSize(bookElement) {
+            const titleElement = bookElement.querySelector('.book-title');
+            const parentWidth = bookElement.style.height;
+            const parentHeight = bookElement.style.width;
+
+            let fontSize = 16; // Start with a base font size
+            titleElement.style.fontSize = `${fontSize}px`;
+
+            while (
+                fontSize > 10 && 
+                (titleElement.scrollWidth > parentWidth || titleElement.scrollHeight > parentHeight)
+            ) {
+                fontSize -= 1; // Reduce font size
+                titleElement.style.fontSize = `${fontSize}px`;
+            }
+
+            if (fontSize === 10 && (titleElement.scrollWidth > parentWidth || titleElement.scrollHeight > parentHeight)) {
+                titleElement.style.whiteSpace = 'normal'; // Wrap text if it still doesn't fit
+            }
+        }
     </script>
 </body>
 </html>

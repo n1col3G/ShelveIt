@@ -28,7 +28,7 @@ CREATE TABLE Books (
     Users_UserID INT NOT NULL,
     bookOrder INT,
     FOREIGN KEY (Users_UserID) REFERENCES Users(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
-    UNIQUE (ISBN, Users_UserID)
+    UNIQUE (Users_UserID)
 ) ENGINE=InnoDB;
 
 -- Create the Friend Requests table

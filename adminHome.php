@@ -184,8 +184,9 @@ if (isset($_POST['delete_book'])) {
                             <?php foreach ($books as $book): ?>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <?= htmlspecialchars($book['bookName']); ?>
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="book_id" value="<?= $book['bookID']; ?>">
+                                    <form method="POST" action="deleteBook.php" style="display:inline;">
+                                        <input type="hidden" name="target_book_id" value="<?= $book['bookID']; ?>">
+                                        <input type="hidden" name="confirm_delete" value="yes">
                                         <button type="submit" name="delete_book" class="btn btn-sm" onclick="return confirm('Are you sure you want to delete this book?');">
                                             <i class="fas fa-square-minus" style="color: #e74c3c;"></i>
                                         </button>
