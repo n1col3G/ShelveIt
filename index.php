@@ -116,7 +116,7 @@
         const toggleMessage = document.getElementById('toggleMessage');
         const toggleFormLink = document.getElementById('toggleForm');
     
-        // Function to switch forms between Login and Sign-up
+        //Function to switch forms between Login and Sign-up
         function switchForms() {
             const imgTag = '<img src="images/ShelveIt-01.png" alt="Image" class="heading-image">';
 
@@ -133,7 +133,7 @@
             }
         }
     
-        // Add event listener to the toggle link
+        //Add event listener to the toggle link
         document.addEventListener('click', function(event) {
             if (event.target.id === 'toggleForm') {
                 event.preventDefault();
@@ -143,9 +143,7 @@
     
         document.getElementById('signupForm').addEventListener('submit', function(event) {
         // Remove event.preventDefault() to allow form submission
-
         // Optional: Add form validation here if needed before submission
-
         // The backend (register_user.php) will handle user creation and redirect
         });
 

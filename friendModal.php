@@ -66,16 +66,17 @@
 </div>
 
 <script>
-    // Function to open the modal
+    //Function to open the modal
     function openFriendModal() {
         const friendModal = new bootstrap.Modal(document.getElementById('friendModal'));
         console.log("openFriendModal called");
         friendModal.show();
-        // Load data for the Friend Requests and Friends tabs
+        //Load data for the Friend Requests and Friends tabs
         loadFriendsRequests();
         loadFriends();
     }
 
+    //Send friend request function
     function sendFriendRequest() {
         const recipientID = document.getElementById('friendUserID').value;
         if (!recipientID) {
@@ -88,18 +89,19 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({recipientID})
         })
-        .then(response => response.text())  // Use .text() instead of .json() to inspect the raw response
+        .then(response => response.text())  //Use .text() instead of .json() to inspect the raw response
         .then(text => {
-            console.log("Raw response:", text);  // Log raw response for debugging
-            const data = JSON.parse(text);      // Now parse it as JSON if it's valid
+            console.log("Raw response:", text);  //Log raw response for debugging
+            const data = JSON.parse(text);      //Now parse it as JSON if it's valid
             alert(data.status);
             const recipientInput = document.getElementById("friendUserID");
-            recipientInput.value = ''; // Clear existing content
+            recipientInput.value = ''; //Clear existing content
             console.log("Input field cleared:", recipientInput.value);
         })
         .catch(error => console.error("Error sending friend request:", error));
     }
 
+    //Loads and displays the friend requests in the modal
     function loadFriendsRequests() {
         console.log("loadFriendsRequests called");
         fetch('loadFriendReq.php')
@@ -107,7 +109,7 @@
             .then(data => {
                 //console.log("Response data:", data);
                 const requestContainer = document.getElementById("friendRequestsContainer");
-                requestContainer.innerHTML = ''; // Clear existing content
+                requestContainer.innerHTML = ''; //Clear existing content
 
                 if (data.length === 0) {
                     requestContainer.innerHTML = "No friend requests found.";
@@ -119,6 +121,7 @@
                     requestDiv.classList.add("friendRequest");
                     requestDiv.textContent = `Friend request from ${request.Firstname} ${request.Lastname} on ${request.requestDate}`;
 
+                    //Buttons to accept or reject the friend request
                     if (request.status === 'Pending') {
                         const acceptButton = document.createElement("button");
                         acceptButton.textContent = "Accept";
@@ -138,9 +141,9 @@
                 });
             })
             .catch(error => console.error("Error loading friend requests:", error));
-            //console.log("Response data:", data);
     }
 
+    //Sends the selected button to the database
     function handleFriendRequest(requestID, status) {
         fetch('friendRequests.php', {
             method: 'POST',
@@ -156,35 +159,33 @@
         .catch(error => console.error("Error handling friend request:", error));
     }
 
+    //Loads and displays the list of approved friends in the modal
     function loadFriends() {
         fetch('loadFriends.php')
         .then(response => response.json())
         .then(friends => {
-            console.log('Friends data:', friends); // Check if this logs an array
+            console.log('Friends data:', friends); //Check if this logs an array
 
             if (!Array.isArray(friends)) {
                 console.error('Error: Expected an array, but received:', friends);
                 return;
             }
             const friendButtonsContainer = document.getElementById('friendButtons');
-            friendButtonsContainer.innerHTML = ''; // Clear existing content
+            friendButtonsContainer.innerHTML = ''; //Clear existing content
 
             friends.forEach(friend => {
-                //console.log(friend.friendID);
                 const friendDiv = document.createElement("div");
                 friendDiv.style.marginBottom = "10px";
                 friendDiv.textContent = `${friend.Firstname} ${friend.Lastname} (Friends since ${friend.friendshipDate})`;
 
+                //View Library button
                 const viewLibraryButton = document.createElement("button");
                 viewLibraryButton.classList.add('btn', 'btn-info');
                 viewLibraryButton.style.marginLeft = "10px";
                 viewLibraryButton.textContent = "View Library";
-                //viewLibraryButton.onclick = () => viewLibrary(friend.userID);
-                //console.log(friend);
-                //console.log(friend.UserID);
+       
                 const friendUserID = friend.UserID;
                 viewLibraryButton.onclick = () => {
-                    //const friendUserID = friend.UserID;
                     if (friendUserID) {
                         window.location.href = `viewLibrary.php?friendUserID=${friendUserID}`;
                     } else {
@@ -193,18 +194,17 @@
                 };
                 friendDiv.appendChild(viewLibraryButton);
                 
-                // Trash Can (Delete Friendship) Button
+                //Delete Friendship Button
                 const deleteButton = document.createElement("button");
                 deleteButton.classList.add('btn', 'btn-danger');
                 deleteButton.style.marginLeft = "6px";
                 deleteButton.style.paddingTop = "9.5px";
                 deleteButton.style.paddingBottom = "9.5px";
-                //deleteButton.textContent = "🗑️"; // Trash can icon
                 const trashIcon = document.createElement("i");
                 trashIcon.classList.add('fas', 'fa-user-slash');
                 deleteButton.appendChild(trashIcon);
                 const friendDeleteID = friend.friendID;
-                deleteButton.onclick = () => deleteFriend(friendDeleteID); // Pass friendID to delete
+                deleteButton.onclick = () => deleteFriend(friendDeleteID); //Pass friendID to delete
                 friendDiv.appendChild(deleteButton);
                 
                 friendButtonsContainer.appendChild(friendDiv);
@@ -213,9 +213,12 @@
         .catch(error => console.error('Error loading friends:', error));
     }
 
+    //Called to view the library of the specific user
     function viewLibrary(friendUserID) {
         window.location.href = `viewLibrary.php?friendUserID=${friendUserID}`;
     }
+
+    //Deletes friend relationship
     function deleteFriend(friendDeleteID) {
         if (confirm("Are you sure you want to remove this friend?")) {
             console.log("Sending delete request for friendID:", friendDeleteID);
@@ -229,7 +232,7 @@
                 console.log('Server response:', result);
                 if (result.status === 'Success') {
                     alert(result.message);
-                    loadFriends(); // Reload the friend list
+                    loadFriends(); //Reload the friend list
                 } else {
                     console.error(result.message);
                     alert("Failed to delete friend: " + result.message);

@@ -57,6 +57,6 @@ CREATE TABLE Friends (
     UNIQUE (userID_min, userID_max)
 ) ENGINE=InnoDB;
 
-
+-- Plaintext password shown will need to be hashed and inserted into table 
 INSERT INTO `Users` (UserID, Email, Password, Admin, Lastname, Firstname) VALUES
 (0, 'ngoulet@go.olemiss.edu', 'ngoulet', TRUE, 'Goulet', 'Nicole');

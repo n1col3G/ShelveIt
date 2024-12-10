@@ -31,104 +31,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Wooden Bookcase</title>
+    <title>ShelveIt!</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom CSS for the modal -->
-    <link href="custom-book-modal.css" rel="stylesheet">
-    <!--<link rel="icon" href="images/ShelveIt-03.png" type="image/x-icon">-->
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <link rel="manifest" href="/images/site.webmanifest">
+    <!-- Custom CSS for the background -->
+    <link href="css/styles.css" rel="stylesheet">
     <style>
         body {
-            /*background-color: #f0f0f0;*/
             background-image: url('images/bkg7.jpeg');
             width: 100%;
             height: 100%;
             background-size: 111%;
             background-position: center;
-        }
-        .heading {
-            /*max-width: fit-content;*/
-            /*margin: 20px;*/
-            margin-left: 0px; 
-            padding: 10px 0;
-            border-left: 5px;
-            border-right: 5px;
-            display: flex; /* Use flexbox */
-            align-items: center;
-            width: 100%;
-        }
-        .heading-content {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            margin-left: 20px;
-        }
-        .heading-image {
-            height: 70px; /* Adjust the height of the image */
-            width: auto; /* Let the width adjust proportionally */
-            margin-left: 5px;
-        }
-        /* Bookcase styling with realistic wood texture */
-        .bookcase {
-            width: 70%;
-            height: 600px;
-            margin: 30px auto;
-            background-image: url('images/bookcase0_bg.jpeg');
-            background-size: cover;
-            /*border: 5px solid #8B4513;  Brown border to simulate a wooden frame */
-            border: 1px solid #664024;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            padding: 10px;
-        }
-        .shelf {
-            background: #664024;
-            border-radius: 5px;
-            height: 115px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-end;
-            padding: 10px;
-            box-shadow: inset 0 5px 10px rgba(0,0,0,0.2), 0 5px 8px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        .book {
-            /*width: 50px;
-            height: 100%;*/
-            border-radius: 3px;
-            cursor: pointer;
-            /*text-align: center;*/
-            /*line-height: 80px;*/
-            /*color: white;*/
-            font-weight: bold;
-            margin-right: 2px;
-            margin-bottom: -9px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            border: 2px solid rgba(0, 0, 0, 0.2);
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            border-radius: 8px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
-        }
-        .book-title {
-            font-size: 16px;  /*Default size */
-            /*font-size: calc(10px + 0.5vw);  Responsive scaling */
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            max-width: 90%; /* Keep some padding from edges */
         }
         /* Customization for "Add Book" button in bottom right corner */
         .add-book-btn {
@@ -142,15 +57,6 @@
             bottom: 30px;
             left: 30px;
             z-index: 1000;
-        }
-        .navbar {
-            padding: 10px;
-        }
-        /* Aligning Profile and Logout buttons to the right */
-        .navbar-buttons {
-            display: flex;
-            justify-content: flex-end;
-            width: 100%;
         }
         .navbar-buttons button {
             margin-right: 10px;
@@ -193,7 +99,6 @@
         <div class="row align-items-center mt-2">
             <div class="col-6">
                 <img src="images/ShelveIt-01.png" alt="Image" class="heading-image">
-                <!--<h1>ShelveIt!</h1>-->
             </div>
             <div class="col-6 d-flex justify-content-end">
                 <button class="btn btn-secondary me-2" onclick="window.location.href='profile.php';">Profile</button>
@@ -212,7 +117,7 @@
         </div>
     </div>
 
-    <!-- Add Book Button (Fixed to Bottom Right) -->
+    <!-- Add Book Button -->
     <button class="btn btn-success add-book-btn" data-bs-toggle="modal" data-bs-target="#customizeBookModal">Add Book</button>
     <button class="btn btn-success add-friend-btn" onclick="openFriendModal()">Friends</button>
 
@@ -262,6 +167,7 @@
             </div>
         </div>
     </div>
+
     <!-- Modal for Editing a Book -->
     <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -308,18 +214,16 @@
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-
-    <!-- JavaScript for Drag and Drop functionality -->
     <script>
         let bookId = 0;
         let currentBookID = null;
 
+        //Loads and displays all the books each time the page is laoded
         function loadBooks() {
-            // Step 1: Clear all books from each shelf before loading
             const bookcase = document.getElementById('bookcase');
             const shelves = bookcase.getElementsByClassName('shelf');
             for (let shelf of shelves) {
-                shelf.innerHTML = ''; // Clear the contents of each shelf
+                shelf.innerHTML = ''; //Clear the contents of each shelf
             }
             fetch('loadBooks.php')
                 .then(response => response.json())
@@ -328,27 +232,24 @@
                     if (Array.isArray(books) && books.length > 0) {
                         books.sort((a, b) => a.bookOrder - b.bookOrder);
                         books.forEach(book => {
-                            // Create a new book element
+                            //Create a new book element
                             const bookElement = document.createElement('div');
                             bookElement.classList.add('book');
                             bookElement.setAttribute('draggable', 'true');
-                            bookElement.setAttribute('id', 'book-' + book.bookID); // Ensure each book has a unique ID
-                            //bookElement.innerText = book.bookName;
+                            bookElement.setAttribute('id', 'book-' + book.bookID); //Ensure each book has a unique ID
 
                             const titleElement = document.createElement('span');
                             titleElement.classList.add('book-title');
                             titleElement.innerText = book.bookName;
                             bookElement.appendChild(titleElement);
-                            //adjustTextSize(bookElement); // Dynamically resize text
 
-
-                            // Apply dimensions
-                            bookElement.style.height = book.bookHeight ? `${book.bookHeight}px` : '100';  // Default if height is missing
-                            bookElement.style.width = book.bookWidth ? `${book.bookWidth}px` : '50';    // Default if width is missing
+                            //Apply dimensions
+                            bookElement.style.height = book.bookHeight ? `${book.bookHeight}px` : '100';
+                            bookElement.style.width = book.bookWidth ? `${book.bookWidth}px` : '50';
 
                             adjustTextSize(bookElement); 
 
-                            // Check if there's a cover image or color
+                            //Check if there's a cover image or color
                             if (book.imagePath){
                                 console.log(`Image Path: ${book.imagePath}`);
                                 bookElement.style.backgroundImage = `url(${book.imagePath})`;
@@ -360,10 +261,10 @@
                                 bookElement.style.backgroundImage = 'none';
                             }
 
-                            // Set the title text color (e.g., white for readability)
+                            //Set the title text color (e.g., white for readability)
                             bookElement.style.color = 'white';
 
-                            // Find the correct shelf based on the shelfID from the database
+                            //Find the correct shelf based on the shelfID from the database
                             const shelfId = `shelf${book.shelfID || 1}`; // Default to shelf 1 if shelfID is missing
                             const shelfElement = document.getElementById(shelfId);
                             
@@ -373,12 +274,12 @@
                                 console.error(`Shelf ID ${shelfId} not found`);
                             }
 
-                            // Add double-click event listener to open the edit modal
+                            //Add double-click event listener to open the edit modal
                             bookElement.addEventListener('dblclick', () => {
                                 openEditModal(book); // Pass the entire book object to openEditModal
                             });
 
-                            // Add drag event listeners
+                            //Add drag event listeners
                             bookElement.addEventListener('dragstart', dragStart);
                             bookElement.addEventListener('dragend', dragEnd);
                         });
@@ -389,28 +290,29 @@
                 .catch(error => console.error('Failed to load books:', error));
         }
         
+        //Adjust the textsize for larger titles and smaller books
         function adjustTextSize(bookElement) {
             const titleElement = bookElement.querySelector('.book-title');
             const parentWidth = bookElement.style.height;
             const parentHeight = bookElement.style.width;
 
-            let fontSize = 16; // Start with a base font size
+            let fontSize = 16; //Start with a base font size
             titleElement.style.fontSize = `${fontSize}px`;
 
             while (
                 fontSize > 10 && 
                 (titleElement.scrollWidth > parentWidth || titleElement.scrollHeight > parentHeight)
             ) {
-                fontSize -= 1; // Reduce font size
+                fontSize -= 1; //Reduce font size
                 titleElement.style.fontSize = `${fontSize}px`;
             }
 
             if (fontSize === 10 && (titleElement.scrollWidth > parentWidth || titleElement.scrollHeight > parentHeight)) {
-                titleElement.style.whiteSpace = 'normal'; // Wrap text if it still doesn't fit
+                titleElement.style.whiteSpace = 'normal'; //Wrap text if it still doesn't fit
             }
         }
         
-        
+        //Add book functionality
         function addCustomBook() {
             event.preventDefault();
             
@@ -422,13 +324,13 @@
             const bookHeight = document.getElementById('bookHeight').value || 100;
             const newBookOrder = document.getElementById(`shelf${shelfID}`).children.length + 1;
 
-            // Validate dimensions
+            //Validate dimensions
             if (bookWidth < 10 || bookWidth > 100 || bookHeight < 10 || bookHeight > 100) {
                 alert("Book dimensions must be between 10 and 100 pixels.");
                 return;
             }
 
-            // Create a new book element immediately on the front-end
+            //Create a new book element immediately on the front-end
             const book = document.createElement('div');
             book.classList.add('book');
             book.setAttribute('draggable', 'true');
@@ -437,12 +339,13 @@
             book.style.height = `${bookHeight}px`;
             book.style.backgroundColor = color;
 
-            // Set the book title on the spine
+            //Set the book title on the spine
             book.innerText = bookName;
-            book.style.writingMode = 'vertical-rl'; // Vertical text
-            book.style.transform = 'rotate(180deg)'; // Rotate to match book spine direction
-            book.style.color = 'white'; // Title text color
+            book.style.writingMode = 'vertical-rl'; //Vertical text
+            book.style.transform = 'rotate(180deg)'; //Rotate to match book spine direction
+            book.style.color = 'white'; //Title text color
 
+            //Check if there is an uploaded image
             if (imageFile) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
@@ -454,15 +357,15 @@
                 book.style.backgroundColor = color;
             }
 
-            // Add drag and drop functionality
+            //Add drag and drop functionality
             book.addEventListener('dragstart', dragStart);
             book.addEventListener('dragend', dragEnd);
 
-            // Add the book to the correct shelf
+            //Add the book to the correct shelf
             document.getElementById(`shelf${shelfID}`).appendChild(book);
             bookId++;
 
-            // Send the data to the server
+            //Send the data to the server
             const formData = new FormData();
             formData.append('bookName', bookName);
             formData.append('bookColor', color);
@@ -482,29 +385,28 @@
             .then(data => {
                 if (data.status === 'success') {
                     console.log('Book added successfully');
-                    // Reset the form
+                    //Reset the form
                     document.getElementById('bookCustomizationForm').reset();
-                    // Hide the modal
+                    //Hide the modal
                     var modal = bootstrap.Modal.getInstance(customizeBookModal);
-                    //var addModal = bootstrap.Modal.getInstance(document.getElementById('customizeBookModal'));
-                    modal.hide(); // Hide the modal
+                    modal.hide(); //Hide the modal
                     loadBooks();
                 } else {
                     console.error('Failed to add book:', data.message);
-                    alert(data.message); // Show validation message to user
+                    alert(data.message); //Show validation message to user
                 }
             })
             .catch(error => console.error('Error adding book:', error));
         }
 
-        // Listen for when the modal is shown
+        //Listen for when the modal is shown
         var customizeBookModal = document.getElementById('customizeBookModal');
         customizeBookModal.addEventListener('show.bs.modal', function () {
-            // Reset the form fields every time the modal is opened
+            //Reset the form fields every time the modal is opened
             document.getElementById('bookCustomizationForm').reset();
-            //addModal.hide();
         });
 
+        //Updates the shelf in the database for books when they are moved around
         function updateShelfInDatabase(bookID, newShelfID, newBookOrder) {
             fetch('updateShelf.php', {
                 method: 'POST',
@@ -524,18 +426,6 @@
             })
             .catch(error => console.error('Error updating shelf:', error));
         }
-
-        // Drag and drop event functions
-        /*
-        function dragStart(event) {
-            const bookID = event.target.id; // Get the ID of the dragged book
-            const oldShelfID = event.target.parentElement.id; // Get the current shelf ID
-
-            // Store bookID and oldShelfID in the dataTransfer object
-            event.dataTransfer.setData('bookID', bookID);
-            event.dataTransfer.setData('oldShelfID', oldShelfID);
-        }
-        */
 
         function dragStart(event) {
             const bookElement = event.target;
@@ -557,66 +447,19 @@
         function dragOver(event) {
             event.preventDefault();
         }
-        /*
-        function drop(event) {
-            event.preventDefault();
-
-            const bookID = event.dataTransfer.getData('bookID'); // Get the book being dragged
-            const bookElement = document.getElementById(bookID);
-            const targetShelfID = event.target.id; // Get the ID of the shelf where the book was dropped
-
-            // Move the book to the new shelf
-            if (targetShelfID.startsWith('shelf')) {
-                const targetShelf = document.getElementById(targetShelfID);
-                
-                // Append the book to the target shelf
-                targetShelf.appendChild(bookElement);
-
-                // Extract numeric part of the shelf ID (e.g., "shelf1" -> 1)
-                const newShelfID = targetShelfID.replace('shelf', '');
-
-                // Find the current order of books on the new shelf
-                const shelfBooks = Array.from(targetShelf.children);
-
-                // Update the book order for each book on the shelf
-                shelfBooks.forEach((element, index) => {
-                    const currentBookID = element.id.replace('book-', '');
-                    const newOrder = index + 1; // The new book order starts from 1
-                    console.log(`Updating: BookID = ${currentBookID}, ShelfID = ${newShelfID}, BookOrder = ${newOrder}`);
-                    updateShelfInDatabase(currentBookID, newShelfID, newOrder); // Update the database
-                });
-
-                // If the book was moved from another shelf, handle the old shelf's books
-                const oldShelfID = bookElement.dataset.oldShelfID; // You should set this when the book is dragged
-                if (oldShelfID && oldShelfID !== newShelfID) {
-                    const oldShelf = document.getElementById(`shelf${oldShelfID}`);
-                    const oldShelfBooks = Array.from(oldShelf.children);
-                    
-                    // Update the order for each book in the old shelf
-                    oldShelfBooks.forEach((element, index) => {
-                        const currentBookID = element.id.replace('book-', '');
-                        const newOrder = index + 1; // Adjust orders in the old shelf
-                        updateShelfInDatabase(currentBookID, oldShelfID, newOrder);
-                    });
-                }
-                // Update the old shelf ID for the moved book
-                bookElement.dataset.oldShelfID = newShelfID;
-            }
-        }
-        */
 
         function drop(event) {
             event.preventDefault();
 
             const bookID = event.dataTransfer.getData('bookID');
             const bookElement = document.getElementById(bookID);
-            const targetShelfID = event.target.closest('.shelf').id; // Closest shelf
+            const targetShelfID = event.target.closest('.shelf').id; //Closest shelf
             const targetShelf = document.getElementById(targetShelfID);
 
-            // Extract numeric shelf ID
+            //Extract numeric shelf ID
             const newShelfID = targetShelfID.replace('shelf', '');
 
-            // Insert the book at the correct position
+            //Insert the book at the correct position
             const dropTarget = event.target.closest('.book');
             if (dropTarget) {
                 targetShelf.insertBefore(bookElement, dropTarget);
@@ -624,24 +467,24 @@
                 targetShelf.appendChild(bookElement);
             }
 
-            // Get current order of books on the new shelf
+            //Get current order of books on the new shelf
             const shelfBooks = Array.from(targetShelf.children);
 
-            // Update book order for all books in the new shelf
+            //Update book order for all books in the new shelf
             shelfBooks.forEach((element, index) => {
                 const currentBookID = element.id.replace('book-', '');
-                const newOrder = index + 1; // Ensure unique sequential order
+                const newOrder = index + 1; //Ensure unique sequential order
                 console.log(`Updating: BookID = ${currentBookID}, ShelfID = ${newShelfID}, BookOrder = ${newOrder}`);
                 updateShelfInDatabase(currentBookID, newShelfID, newOrder);
             });
 
-            // Handle old shelf if the book was moved
+            //Handle old shelf if the book was moved
             const oldShelfID = bookElement.dataset.oldShelfID;
             if (oldShelfID && oldShelfID !== newShelfID) {
                 const oldShelf = document.getElementById(`shelf${oldShelfID}`);
                 const oldShelfBooks = Array.from(oldShelf.children);
 
-                // Update book order for all books in the old shelf
+                //Update book order for all books in the old shelf
                 oldShelfBooks.forEach((element, index) => {
                     const currentBookID = element.id.replace('book-', '');
                     const newOrder = index + 1; // Adjust orders in the old shelf
@@ -649,35 +492,35 @@
                 });
             }
 
-            // Update the old shelf ID for the moved book
+            //Update the old shelf ID for the moved book
             bookElement.dataset.oldShelfID = newShelfID;
         }
 
-        // Load books from the server when the page loads
+        //Load books from the server when the page loads
         window.onload = function() {
             loadBooks();
         };
 
-        // Function to edit book details
+        //Function to edit book details
         function openEditModal(book) {
-            console.log("Opening edit modal for book:", book); // Debugging log
+            console.log("Opening edit modal for book:", book); //Debugging
             currentBookID = book.bookID;
-            // Fetch book details using the bookID
+            //Fetch book details using the bookID
             fetch(`getBookDetails.php?bookID=${book.bookID}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Populate modal form with data
+                    //Populate modal form with data
                     document.getElementById('editBookName').value = data.bookName;
                     document.getElementById('editBookColor').value = data.bookColor;
                     document.getElementById('editBookHeight').value = data.bookHeight;
                     document.getElementById('editBookWidth').value = data.bookWidth;
                     document.getElementById('editBookImage').files[0] = data.imagePath;
 
-                    // Preview current image (optional)
+                    //Preview current image (optional)
                     const imagePreview = document.getElementById('currentBookImagePreview');
                     imagePreview.src = data.imagePath ? data.imagePath : '';
 
-                    // Show the edit modal after populating the form
+                    //Show the edit modal after populating the form
                     const editModal = new bootstrap.Modal(document.getElementById('editBookModal'));
                     editModal.show();
                     console.log("Modal opened");
@@ -689,16 +532,16 @@
 
         let isImageDeleted = false; 
         document.getElementById('deleteImageBtn').addEventListener('click', function () {
-            // Clear the image preview and mark the image for deletion
+            //Clear the image preview and mark the image for deletion
             document.getElementById('currentBookImagePreview').src = "";
             document.getElementById('editBookImage').value = ''; // Clear file input
             isImageDeleted = true; // Flag to send to the backend
             console.log("Image marked for deletion.");
         });
 
-        // Save changes function to update the book in the database
+        //Save changes function to update the book in the database
         document.getElementById('saveChangesBtn').addEventListener('click', function() {
-            // Collect updated data from the edit form
+            //Collect updated data from the edit form
             const bookID = currentBookID; // Assuming bookID is available in scope
             const updatedName = document.getElementById('editBookName').value;
             const updatedColor = document.getElementById('editBookColor').value;
@@ -707,7 +550,7 @@
             const updatedImage = document.getElementById('editBookImage').files[0];
 
 
-            // Construct the data to send to the server
+            //Construct the data to send to the server
             const formData = new FormData();
             formData.append('bookID', bookID);
             formData.append('bookName', updatedName);
@@ -715,17 +558,12 @@
             formData.append('bookHeight', updatedHeight);
             formData.append('bookWidth', updatedWidth);
             formData.append('deleteImage', isImageDeleted ? 'true' : 'false');
-            //formData.append('bookCover', updatedImage);
+
             if (!isImageDeleted && updatedImage) {
                 formData.append('bookCover', updatedImage);
             }
             
-             // Handle image deletion or update
-            
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
-            // Send update request to editBook.php
+            //Send update request to editBook.php
             fetch('editBook.php', {
                 method: 'POST',
                 body: formData
@@ -734,10 +572,10 @@
             .then(data => {
                 if (data.success) {
                     console.log("Book updated successfully.");
-                    // Close the modal
+                    //Close the modal
                     const editModal = bootstrap.Modal.getInstance(document.getElementById('editBookModal'));
                     editModal.hide();
-                    // Reload books to reflect changes
+                    //Reload books to reflect changes
                     loadBooks();
                 } else {
                     console.error("Failed to update book:", data.error);
@@ -750,12 +588,11 @@
         });
 
         document.getElementById('editBookModal').addEventListener('hidden.bs.modal', function () {
-            //document.getElementById('editBookImage').value = ""; // Clear file input
             document.getElementById('currentBookImagePreview').src = ""; // Clear image preview
             isImageDeleted = false;
         });
 
-        // Function to delete a book
+        //Function to delete a book
         function deleteBook() {
             const bookID = currentBookID;
 
@@ -772,8 +609,8 @@
                     if (data.success) {
                         console.log('Book deleted successfully');
                         var modal = bootstrap.Modal.getInstance(document.getElementById('editBookModal')); // Get the modal instance
-                        modal.hide(); // Hide the modal
-                        loadBooks(); // Reload the bookshelf to reflect the deleted book
+                        modal.hide(); //Hide the modal
+                        loadBooks(); //Reload the bookshelf to reflect the deleted book
                     } else {
                         console.error('Failed to delete book:', data.error);
                         alert("Failed to delete book: " + data.error);

@@ -11,7 +11,7 @@ if (!isset($_SESSION['email']) || ($_SESSION['admin'] !== 1)) {
     exit();
 }
 
-// Fetch users from the database
+//Fetch users from the database
 try {
     $stmt = $db->prepare("
         SELECT u.*, COUNT(b.bookID) AS book_count 
@@ -26,13 +26,13 @@ try {
     echo "Error: " . $e->getMessage();
 }
 
-// Handle user deletion
+//Handle user deletion
 if (isset($_POST['delete_user'])) {
     $userIdToDelete = $_POST['user_id'];
     try {
-        $stmt = $db->prepare("DELETE FROM Users WHERE UserID = ?"); // Adjust the UserID field if necessary
+        $stmt = $db->prepare("DELETE FROM Users WHERE UserID = ?"); //Adjust the UserID field if necessary
         $stmt->execute([$userIdToDelete]);
-        header("Location: admin.php"); // Redirect back to the admin page after deletion
+        header("Location: admin.php"); //Redirect back to the admin page after deletion
         exit();
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
@@ -42,9 +42,9 @@ if (isset($_POST['delete_user'])) {
 if (isset($_POST['delete_book'])) {
     $bookIdToDelete = $_POST['book_id'];
     try {
-        $stmt = $db->prepare("DELETE FROM Books WHERE BookID = ?"); // Adjust the BookID field if necessary
+        $stmt = $db->prepare("DELETE FROM Books WHERE BookID = ?"); //Adjust the BookID field if necessary
         $stmt->execute([$bookIdToDelete]);
-        header("Location: admin.php"); // Redirect back to the admin page after deletion
+        header("Location: admin.php"); //Redirect back to the admin page after deletion
         exit();
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
@@ -57,24 +57,20 @@ if (isset($_POST['delete_book'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Wooden Bookcase</title>
+    <title>ShelveIt! -- Admin</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <!-- Custom CSS for the modal -->
-    <link href="custom-book-modal.css" rel="stylesheet">
     <style>
         body {
             background-color: #f0f0f0;
         }
         .heading {
-            /*max-width: fit-content;*/
-            /*margin: 20px;*/
             margin-left: 0px; 
             padding: 10px 0;
             border-left: 5px;
             border-right: 5px;
-            display: flex; /* Use flexbox */
+            display: flex;
             align-items: center;
             width: 100%;
         }
@@ -92,7 +88,6 @@ if (isset($_POST['delete_book'])) {
         .navbar {
             padding: 10px;
         }
-        /* Aligning Profile and Logout buttons to the right */
         .navbar-buttons {
             display: flex;
             justify-content: flex-end;
@@ -135,18 +130,12 @@ if (isset($_POST['delete_book'])) {
         <div class="row align-items-center mt-2">
             <div class="col-6">
                 <img src="images/ShelveIt-01.png" alt="Image" class="heading-image">
-                <!--<h1>ShelveIt!</h1>-->
             </div>
             <div class="col-6 d-flex justify-content-end">
                 <button class="btn btn-secondary me-2" onclick="window.location.href='profile.php';">Profile</button>
                 <button class="btn btn-primary" onclick="window.location.href='logout.php';">Logout</button>
             </div>
         </div>
-        <!--
-        <div class="col-6">
-            <h3>Admin Panel - User Management</h3>
-        </div>
-        -->
     </div>
 
     <div class="container mt-4" style="width: 960px;">
@@ -157,13 +146,7 @@ if (isset($_POST['delete_book'])) {
                     <?= htmlspecialchars($user['Firstname'] . ' ' . $user['Lastname'] . '  -  ' . $user['Email']); ?>
                     <span class="text-muted">(Last Updated: <?= htmlspecialchars($user['lastEdit'] ?: 'N/A'); ?>, <?= $user['book_count']; ?> books)</span>
                     <span id="toggle-icon-<?= $user['UserID']; ?>" class="fas fa-chevron-down" style="cursor:pointer; float: left; margin-right: 10px; margin-left: 2px; margin-top: 3px;"></span>
-                    <!--
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="target_user_id" value="<?= $user['UserID']; ?>">
-                        <i type="submit" name="delete_user" class="fas fa-trash btn btn-danger btn-sm float-end" onclick="confirmDelete()"></i>
-                    </form>
-                    -->
-
+               
                     <form method="POST" action="deleteAccount.php" style="display:inline;">
                         <input type="hidden" name="target_user_id" value="<?= $user['UserID']; ?>">
                         <input type="hidden" name="confirm_delete" value="yes">
@@ -174,7 +157,7 @@ if (isset($_POST['delete_book'])) {
                 </div>
                 <div class="user-books" id="books-<?= $user['UserID']; ?>">
                     <?php
-                    // Fetch books for each user
+                    //Fetch books for each user
                     $stmt = $db->prepare("SELECT * FROM Books WHERE Users_UserID = ? ORDER BY BookID");
                     $stmt->execute([$user['UserID']]);
                     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -202,7 +185,7 @@ if (isset($_POST['delete_book'])) {
         </div>
     </div>
 
-    <!-- Bootstrap JS and Popper.js -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleBooks(userId) {
@@ -210,13 +193,13 @@ if (isset($_POST['delete_book'])) {
             const toggleIcon = document.getElementById('toggle-icon-' + userId);
 
             if (booksContainer.style.display === "none" || booksContainer.style.display === "") {
-            booksContainer.style.display = "block"; // Show the books
-            toggleIcon.classList.remove('fa-chevron-down'); // Remove down icon
-            toggleIcon.classList.add('fa-chevron-up'); // Add up icon
+            booksContainer.style.display = "block"; //Show the books
+            toggleIcon.classList.remove('fa-chevron-down'); //Remove down icon
+            toggleIcon.classList.add('fa-chevron-up'); //Add up icon
             } else {
-                booksContainer.style.display = "none"; // Hide the books
-                toggleIcon.classList.remove('fa-chevron-up'); // Remove up icon
-                toggleIcon.classList.add('fa-chevron-down'); // Add down icon
+                booksContainer.style.display = "none"; //Hide the books
+                toggleIcon.classList.remove('fa-chevron-up'); //Remove up icon
+                toggleIcon.classList.add('fa-chevron-down'); //Add down icon
             }
         }
         function confirmDelete() {
@@ -225,9 +208,5 @@ if (isset($_POST['delete_book'])) {
             }
         }
     </script>
-    <!-- Form for account deletion 
-    <form id="deleteForm" action="deleteAccount.php" method="post" style="display: none;">
-        <input type="hidden" name="confirm_delete" value="yes">
-    </form>-->
 </body>
 </html>

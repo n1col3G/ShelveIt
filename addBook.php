@@ -7,7 +7,7 @@ if (!isset($_SESSION['email'])) {
 }
 require 'db_connect.php';
 
-// Enforce minimum and maximum constraints
+//Enforce minimum and maximum constraints
 $minWidth = 10;
 $maxWidth = 100;
 $minHeight = 10;
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $imagePath = '';
     $bookOrder = $_POST['bookOrder'];
 
-    // Validate height and width
+    //Validate height and width
     if ($bookWidth < $minWidth || $bookWidth > $maxWidth) {
         echo json_encode(["status" => "error", "message" => "Book width must be between $minWidth and $maxWidth pixels."]);
         exit();
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-   // Handle file upload
+   //Handle file upload
     if (isset($_FILES['bookCover']) && $_FILES['bookCover']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['bookCover']['tmp_name'];
         $fileName = $_FILES['bookCover']['name'];
@@ -42,17 +42,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
 
-        // Allowed file extensions
+        //Allowed file extensions
         $allowedfileExtensions = ['jpg', 'png', 'jpeg', 'gif'];
         if (in_array($fileExtension, $allowedfileExtensions)) {
-            // Check for file size (max 5MB, for example)
+            //Check for file size (max 5MB, for example)
             if ($fileSize > 5000000) {
                 echo json_encode(["status" => "error", "message" => "File size exceeds the limit of 5MB."]);
                 exit();
             }
 
             $uploadFileDir = "/home/ngoulet/public_html/Csci487/ShelveIt/bookCovers/";
-            $webAccessibleDir = "/~ngoulet/Csci487/ShelveIt/bookCovers/"; // Web-accessible directory path
+            $webAccessibleDir = "/~ngoulet/Csci487/ShelveIt/bookCovers/"; //Web-accessible directory path
 
             if (!is_dir($uploadFileDir)) {
                 if (!mkdir($uploadFileDir, 0777, true)) {
@@ -67,10 +67,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $newFileName = uniqid() . '.' . $fileExtension;
             $dest_path = $uploadFileDir . $newFileName;
-            $imagePath = $webAccessibleDir . $newFileName; // Store web-accessible path for the database
+            $imagePath = $webAccessibleDir . $newFileName; //Store web-accessible path for the database
 
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                // Successfully uploaded
+                //Successfully uploaded
             } else {
                 error_log("Failed to move uploaded file.");
                 error_log("Source: $fileTmpPath");
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Insert book details into the database
+    //Insert book details into the database
     try {
         $conn = Database::dbConnect();
         $query = "INSERT INTO Books (bookName, bookColor, shelfID, imagePath, Users_UserID, bookOrder, bookHeight, bookWidth) 
